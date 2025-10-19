@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Thiệp 20/10 — Romantic Glow</title>
+  <meta name="description" content="Thiệp 20/10 tông hồng pastel, yêu cầu mật khẩu để mở lời chúc và nghe nhạc" />
+  <style>
+    :root{--bg1:#fff7fb;--bg2:#fff0f6;--accent:#ff81b9;--soft:#ffd6e8;--text:#3a2b3a}
+    *{box-sizing:border-box}html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:var(--text)}
+    body{background:linear-gradient(180deg,var(--bg1),var(--bg2));display:grid;place-items:center;padding:28px;overflow:hidden}
+
+    /* Lock overlay */
+    .lock-wrap{position:fixed;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,rgba(255,244,248,0.95),rgba(255,245,249,0.98));z-index:50}
+    .lock-card{width:min(520px,92vw);background:rgba(255,255,255,0.9);border-radius:18px;padding:28px;box-shadow:0 20px 50px rgba(150,70,110,0.12);text-align:center}
+    .lock-card h2{margin:0 0 8px;font-size:20px;color:#4a2d4a}
+    .lock-card p{margin:0 0 18px;color:#6b495f}
+    .pw{width:70%;padding:12px 14px;border-radius:12px;border:1px solid rgba(200,150,180,0.18);font-size:15px}
+    .btn{display:inline-block;margin-top:12px;padding:10px 16px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--accent),#ff6fae);color:#fff;font-weight:600;cursor:pointer;box-shadow:0 10px 30px rgba(255,129,185,0.14)}
+    .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(255,129,185,0.12);box-shadow:none}
+    .hint{font-size:13px;color:#a06a8a;margin-top:8px}
+
+    /* Card content */
+    .card{width:min(980px,96vw);max-width:1100px;border-radius:20px;padding:36px;background:linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,249,251,0.8));box-shadow:0 30px 80px rgba(150,70,110,0.06);display:flex;gap:28px;align-items:center;position:relative;overflow:visible}
+    .left{flex:1}
+    h1{font-size:clamp(28px,4.5vw,46px);margin:0;background:linear-gradient(90deg,#ff6fae,#ff81b9);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-0.02em}
+    .subtitle{color:#6b495f;margin-top:8px;margin-bottom:18px}
+    .message{background:linear-gradient(180deg, rgba(255,250,255,0.9), rgba(255,243,248,0.9));padding:18px;border-radius:14px;border:1px solid rgba(255,210,230,0.6);font-size:16px;line-height:1.6;color:#5a324a}
+
+    .right{width:360px;display:grid;place-items:center}
+    .flower{width:300px;height:300px;filter:drop-shadow(0 14px 30px rgba(200,120,160,0.08));transition:transform 3s ease-in-out;}
+
+    /* particles container */
+    .particles{position:absolute;inset:0;pointer-events:none;z-index:10}
+    .particle{position:absolute;width:14px;height:14px;border-radius:6px;opacity:.95;transform:translate3d(0,0,0)}
+
+    footer{position:fixed;left:16px;bottom:12px;font-size:12px;color:#9a728f}
+
+    /* reveal animation */
+    .hidden{opacity:0;transform:translateY(12px) scale(.995)}
+    .fade-in{animation:fadeIn .6s ease forwards}
+    @keyframes fadeIn{to{opacity:1;transform:none}}
+
+    @keyframes flowerSpin {
+      0% { transform: translate(-50%, -50%) scale(0.6) rotate(0deg); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1) rotate(180deg); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(0.9) rotate(360deg); opacity: 0; }
+    }
+    .flower.center-spin {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      z-index: 60;
+      animation: flowerSpin 3.6s ease-in-out forwards;
+    }
+
+    @media (max-width:880px){.card{flex-direction:column}.right{width:100%}}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+
+  <main class="card hidden" id="mainCard" aria-hidden="true">
+    <section class="left">
+      <h1>Chúc mừng </h1>
+      <h1>Ngày phụ nữ Việt Nam</h1>
+      <h1>20/10</h1>
+      <div class="subtitle">Một lời ngọt ngào, một bản nhạc nhẹ và muôn vàn yêu thương.</div>
+      <div class="message" id="messageBox"></div>
+    </section>
+    <aside class="right">
+      <svg class="flower" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <defs>
+          <radialGradient id="g1" cx="30%" cy="30%"><stop offset="0%" stop-color="#fff8fb"/><stop offset="100%" stop-color="#ffd6e8"/></radialGradient>
+        </defs>
+        <g transform="translate(130,130)">
+          <g id="petals">
+            <g transform="rotate(0)"><ellipse rx="30" ry="70" fill="url(#g1)"/></g>
+            <g transform="rotate(40)"><ellipse rx="30" ry="70" fill="#ffe7ef"/></g>
+            <g transform="rotate(80)"><ellipse rx="30" ry="70" fill="#ffcfe6"/></g>
+            <g transform="rotate(120)"><ellipse rx="30" ry="70" fill="#ffd6ec"/></g>
+            <g transform="rotate(160)"><ellipse rx="30" ry="70" fill="#ffd6e8"/></g>
+            <g transform="rotate(200)"><ellipse rx="30" ry="70" fill="#ffe7f1"/></g>
+            <g transform="rotate(240)"><ellipse rx="30" ry="70" fill="#ffd0e4"/></g>
+            <g transform="rotate(280)"><ellipse rx="30" ry="70" fill="#ffc2db"/></g>
+          </g>
+          <circle r="30" fill="#fff" stroke="#ffd0e4" stroke-width="4"/>
+        </g>
+      </svg>
+    </aside>
+  </main>
+
+  <div class="lock-wrap" id="lockWrap" role="dialog" aria-modal="true">
+    <div class="lock-card">
+      <h2>Chào bạn, mình muốn tặng bạn một điều bất ngờ 💌</h2>
+      <p>Nhập ngày sinh của bạn để mở thiệp và nghe bản nhạc nhé. (Định dạng DDMMYYYY)</p>
+      <input id="pwInput" class="pw" type="password" inputmode="numeric" placeholder="VD: 01012001" />
+      <div>
+        <button class="btn" id="unlockBtn">Mở thiệp</button>
+        <button class="btn secondary" id="cancelBtn">Hủy</button>
+      </div>
+      <div class="hint">Mật khẩu sẽ là ngày sinh (ví dụ: 01/01/2001 → 01012001)</div>
+    </div>
+  </div>
+
+  <footer>Nguyễn Quốc Khánh</footer>
+
+  <audio id="bgMusic" preload="auto" src="sweet-feel-good-background-music-258628.mp3"></audio>
+
+  <script>
+    const SECRET = '25052003';
+    const messageHTML = `
+      <p>Bạn yêu à 💕</p>
+      <p>20/10 đến rồi, mình chỉ muốn gửi bạn một điều thật nhỏ…<br>
+      Một chút nắng trong lời chúc, một chút gió mang theo yêu thương,<br>
+      và cả trái tim mình – luôn hướng về bạn, dịu dàng như thế.</p>
+      <p>Cảm ơn bạn đã đến, làm cuộc sống của mình bớt nhạt,<br>
+      làm mọi ngày bình thường trở nên đặc biệt chỉ vì có nụ cười của bạn.</p>
+      <p>Chúc bạn yêu của mình luôn xinh đẹp, luôn vui vẻ,<br>
+      luôn được bao quanh bởi yêu thương – nhất là của mình 💗</p>
+      <p>Dù có bao nhiêu ngày 20/10 nữa đi chăng nữa, mình vẫn sẽ chọn bạn – lần nào cũng vậy. 🌷</p>
+    `;
+
+    const pwInput = document.getElementById('pwInput');
+    const unlockBtn = document.getElementById('unlockBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const mainCard = document.getElementById('mainCard');
+    const messageBox = document.getElementById('messageBox');
+    const lockWrap = document.getElementById('lockWrap');
+    const audioEl = document.getElementById('bgMusic');
+
+    function reveal(){
+      const flower = document.querySelector('.flower');
+      const clone = flower.cloneNode(true);
+      clone.classList.add('center-spin');
+      document.body.appendChild(clone);
+      setTimeout(()=>{
+        clone.remove();
+        messageBox.innerHTML = messageHTML;
+        mainCard.classList.remove('hidden');
+        mainCard.classList.add('fade-in');
+        mainCard.setAttribute('aria-hidden','false');
+        startParticles();
+        audioEl.play().catch(()=>{});
+      },3600);
+    }
+
+    unlockBtn.addEventListener('click', ()=>{
+      const val = (pwInput.value||'').trim();
+      if(val===SECRET){
+        lockWrap.style.transition='opacity .36s ease';
+        lockWrap.style.opacity=0;
+        setTimeout(()=>lockWrap.remove(),420);
+        reveal();
+      }else{
+        pwInput.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}],{duration:360});
+        unlockBtn.textContent='Sai mã — thử lại';
+        setTimeout(()=>unlockBtn.textContent='Mở thiệp',1200);
+        pwInput.value='';
+        pwInput.focus();
+      }
+    });
+
+    cancelBtn.addEventListener('click',()=>{pwInput.value='';pwInput.blur();});
+    pwInput.addEventListener('keydown',e=>{if(e.key==='Enter')unlockBtn.click();});
+
+    const particlesRoot=document.getElementById('particles');
+    const colors=['#ffb6d0','#ffd6e8','#ff81b9','#fff1f8','#ffd0e4'];
+    function createParticle(type){
+      const el=document.createElement('div');el.className='particle';
+      const size=10+Math.random()*18;el.style.width=size+'px';el.style.height=size+'px';
+      el.style.left=Math.random()*100+'%';el.style.bottom=(-10-Math.random()*40)+'px';
+      const color=colors[Math.floor(Math.random()*colors.length)];
+      el.style.background=color;el.style.borderRadius='50%';
+      particlesRoot.appendChild(el);
+      const drift=(Math.random()-0.5)*40;const rise=420+Math.random()*260;const dur=6000+Math.random()*7000;
+      el.animate([{transform:`translateY(0px)`,opacity:1},{transform:`translateY(-${rise}px) translateX(${drift}px)`,opacity:0}],{duration:dur,easing:'ease-out'}).onfinish=()=>el.remove();
+    }
+    let particleTimer;
+    function startParticles(){
+      if(particleTimer)return;
+      particleTimer=setInterval(()=>createParticle('petal'),400);
+    }
+
+    document.addEventListener('visibilitychange',()=>{if(document.hidden){clearInterval(particleTimer);particleTimer=null;}else if(mainCard.classList.contains('fade-in'))startParticles();});
+    pwInput.focus();
+  </script>
+</body>
+</html>
